@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cost of Living Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 { color: #333; }
+        input {
+            width: 70%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        button:hover { background: #5568d3; }
+        #results {
+            margin-top: 30px;
+        }
+        .category {
+            background: #f7f7f7;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Cost of Living Calculator</h1>
+        <div>
+            <input type="text" id="cityInput" placeholder="Enter city name (e.g., New York, London, Tokyo)">
+            <button onclick="searchCity()">Search</button>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function searchCity() {
+            const city = document.getElementById('cityInput').value;
+            const resultsDiv = document.getElementById('results');
+            
+            if (!city) {
+                alert('Please enter a city name');
+                return;
+            }
+
+            resultsDiv.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/cost-of-living/${encodeURIComponent(city)}`);
+                
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}. Make sure the backend is running!</p>`;
+            }
+        }
+
+        function displayResults(data) {
+            const total = data.categories.housing.cityCenter + 
+                         data.categories.food.monthly + 
+                         data.categories.transportation.monthly + 
+                         data.categories.utilities.monthly + 
+                         data.categories.entertainment.monthly;
+
+            const html = `
+                <h2>${data.city}</h2>
+                <p>Last updated: ${data.lastUpdated}</p>
+                
+                <div class="category">
+                    <h3>🏠 ${data.categories.housing.label}</h3>
+                    <p>City Center: $${data.categories.housing.cityCenter}/month</p>
+                    <p>Outside Center: $${data.categories.housing.outside}/month</p>
+                </div>
+
+                <div class="category">
+                    <h3>🍔 ${data.categories.food.label}</h3>
+                    <p>$${data.categories.food.monthly}/month</p>
+                </div>
+
+                <div class="category">
+                    <h3>🚗 ${data.categories.transportation.label}</h3>
+                    <p>$${data.categories.transportation.monthly}/month</p>
+                </div>
+
+                <div class="category">
+                    <h3>💡 ${data.categories.utilities.label}</h3>
+                    <p>$${data.categories.utilities.monthly}/month</p>
+                </div>
+
+                <div class="category">
+                    <h3>🎬 ${data.categories.entertainment.label}</h3>
+                    <p>$${data.categories.entertainment.monthly}/month</p>
+                </div>
+
+                <div class="total">
+                    <strong>Total Monthly Cost:</strong> $${total.toLocaleString()}
+                    <br><small>(City center apartment)</small>
+                </div>
+            `;
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // Allow Enter key to search
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchCity();
+        });
+    </script>
+</body>
+</html>
