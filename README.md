@@ -29,6 +29,8 @@ Search any major city to see:
 
 **Try these cities**: New York, Los Angeles, San Francisco, Seattle, Austin, Boston, Chicago, Mountain View, London, Tokyo, Paris, Singapore, and thousands more!
 
+![Cost of Living Screenshot](screenshot of cost of living.png)
+
 ## 🛠️ Technologies Used
 
 ### Backend
