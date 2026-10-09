@@ -233,7 +233,7 @@ This project is [MIT](LICENSE) licensed.
 
 ## 📧 Contact
 
-Esther Ademuwagun - estherade127@gmail.com
+Elijah Ademuwagun - peluade127@gmail.com
 
 Project Link: [https://github.com/pelzade127/cost-of-living-calculator]
 
